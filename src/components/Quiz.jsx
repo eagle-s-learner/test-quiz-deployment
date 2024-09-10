@@ -11,7 +11,7 @@ export default function Quiz() {
     
     function handleSelectAnswer(selectAnswer) {
         setUserAnswers((prev) => {
-            return [...prev, answer];
+            return [...prev, selectAnswer];
         });
     }
     
