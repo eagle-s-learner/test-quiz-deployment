@@ -1,44 +1,44 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import QUESTIONS from "../question";
-import quizeCompleteImg from '../assets/quiz-complete.png';
+import Question from "./Question";
+import Summary from "./Summary";
 
 export default function Quiz() {
     const [userAnswers, setUserAnswers] = useState([]);
 
     const activeQIndex = userAnswers.length;
-    
+
     const quizComplete = activeQIndex === QUESTIONS.length;
-    
-    function handleSelectAnswer(selectAnswer) {
+
+    // console.log('1')
+    const handleSelectAnswer = useCallback(function handleSelectAnswer(
+        selectAnswer
+    ) {
+        // console.log('2');
+        // console.log('3');
         setUserAnswers((prev) => {
             return [...prev, selectAnswer];
         });
+    },
+    []);
+
+    const handleSkipAnswer = useCallback(
+        () => handleSelectAnswer(null),
+        [handleSelectAnswer]
+    );
+
+    if (quizComplete) {
+        return <Summary userAnswers={userAnswers}/>
     }
-    
-    if(quizComplete){
-        return <div id="summary">
-            <img src={quizeCompleteImg} alt="quiz complete img" />
-            <h2>Quiz Completed!</h2>
-        </div>
-    }
-    
-    const shuffledAns = [...QUESTIONS[activeQIndex].answers];
-    shuffledAns.sort(() => Math.random() - 0.5);
 
     return (
         <div id="quiz">
-            <div id="question">
-                <h2>{QUESTIONS[activeQIndex].text}</h2>
-                <ul id="answers">
-                    {shuffledAns.map((answer) => (
-                        <li key={answer} className="answer">
-                            <button onClick={() => handleSelectAnswer(answer)}>
-                                {answer}
-                            </button>
-                        </li>
-                    ))}
-                </ul>
-            </div>
+            <Question
+                key={activeQIndex}
+                index={activeQIndex}
+                onSelectAnswer={handleSelectAnswer}
+                onSkipAnswer={handleSkipAnswer}
+            />
         </div>
     );
 }
